@@ -1,8 +1,6 @@
 const Event = require("../models/Event");
 
-// @desc    Get all events
-// @route   GET /api/events
-// @access  Public
+
 exports.getEvents = async (req, res) => {
   try {
     const events = await Event.find().populate("organizer", "username email");
@@ -12,9 +10,7 @@ exports.getEvents = async (req, res) => {
   }
 };
 
-// @desc    Get single event
-// @route   GET /api/events/:id
-// @access  Public
+
 exports.getEventById = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id).populate(
@@ -33,9 +29,7 @@ exports.getEventById = async (req, res) => {
   }
 };
 
-// @desc    Get user's events (Created & Joined)
-// @route   GET /api/events/user/dashboard
-// @access  Private
+
 exports.getDashboardEvents = async (req, res) => {
   try {
     const createdEvents = await Event.find({ organizer: req.user._id });
@@ -47,19 +41,17 @@ exports.getDashboardEvents = async (req, res) => {
   }
 };
 
-// @desc    Create a new event
-// @route   POST /api/events
-// @access  Private
+
 exports.createEvent = async (req, res) => {
   const { title, description, date, location, capacity } = req.body;
 
-  // --- CLOUDINARY CHANGE HERE ---
+  
   let imagePath = "";
   if (req.file) {
-    // Cloudinary gives us the full URL in .path
+    
     imagePath = req.file.path;
   }
-  // ------------------------------
+ 
 
   try {
     const event = new Event({
@@ -68,7 +60,7 @@ exports.createEvent = async (req, res) => {
       date,
       location,
       capacity,
-      image: imagePath, // Save the URL directly
+      image: imagePath, 
       organizer: req.user._id,
     });
 
@@ -79,9 +71,7 @@ exports.createEvent = async (req, res) => {
   }
 };
 
-// @desc    Join an event (RSVP)
-// @route   POST /api/events/:id/rsvp
-// @access  Private
+
 exports.rsvpEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -105,9 +95,7 @@ exports.rsvpEvent = async (req, res) => {
   }
 };
 
-// @desc    Update event
-// @route   PUT /api/events/:id
-// @access  Private (Owner Only)
+
 exports.updateEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -120,11 +108,11 @@ exports.updateEvent = async (req, res) => {
 
     Object.assign(event, req.body);
 
-    // --- CLOUDINARY CHANGE HERE ---
+    
     if (req.file) {
-      event.image = req.file.path; // Update with new Cloudinary URL
+      event.image = req.file.path; 
     }
-    // ------------------------------
+   
 
     const updatedEvent = await event.save();
     res.json(updatedEvent);
@@ -133,9 +121,7 @@ exports.updateEvent = async (req, res) => {
   }
 };
 
-// @desc    Delete event
-// @route   DELETE /api/events/:id
-// @access  Private (Owner Only)
+
 exports.deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api"; // Updated import
+import api from "../api"; 
 import { useNavigate } from "react-router-dom";
 
 const DashboardPage = () => {
@@ -43,7 +43,7 @@ const DashboardPage = () => {
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "40px 20px" }}>
       <h1 style={{ marginBottom: "40px" }}>My Dashboard</h1>
 
-      {/* Created Events */}
+      
       <div style={{ marginBottom: "60px" }}>
         <h2 style={{ borderBottom: "2px solid #eee", paddingBottom: "15px" }}>
           Events I Organized 🛠️
@@ -60,7 +60,7 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Joined Events */}
+      
       <div>
         <h2 style={{ borderBottom: "2px solid #eee", paddingBottom: "15px" }}>
           Events I'm Attending 🎟️

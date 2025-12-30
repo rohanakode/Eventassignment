@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api"; // Updated import
+import api from "../api"; 
 
 const EditEventPage = () => {
   const { id } = useParams();
@@ -20,7 +20,7 @@ const EditEventPage = () => {
       try {
         const res = await api.get(`/api/events/${id}`);
         const event = res.data;
-        // Format date for input field
+        
         const formattedDate = new Date(event.date).toISOString().split("T")[0];
         setFormData({
           title: event.title,

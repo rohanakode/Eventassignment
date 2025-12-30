@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api"; // 👈 HERE IS THE IMPORT YOU WANTED
+import api from "../api"; 
 
 const EventDetailsPage = () => {
   const { id } = useParams();
@@ -15,8 +15,7 @@ const EventDetailsPage = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        // We use 'api.get' instead of 'axios.get'
-        // The URL is cleaner because 'api' already knows the server address
+        
         const res = await api.get(`/api/events/${id}`);
         setEvent(res.data);
       } catch (err) {
@@ -84,7 +83,7 @@ const EventDetailsPage = () => {
 
   return (
     <div style={{ maxWidth: "900px", margin: "30px auto", padding: "20px" }}>
-      {/* --- BACK BUTTON --- */}
+   
       <button
         onClick={() => navigate("/")}
         style={{
@@ -109,7 +108,7 @@ const EventDetailsPage = () => {
           background: "white",
         }}
       >
-        {/* --- HEADER IMAGE --- */}
+        
         <div
           style={{
             height: "400px",
@@ -171,7 +170,7 @@ const EventDetailsPage = () => {
             </p>
           </div>
 
-          {/* ACTION BUTTONS */}
+          
           <div style={{ marginTop: "30px", display: "flex", gap: "15px" }}>
             <button
               onClick={handleRSVP}

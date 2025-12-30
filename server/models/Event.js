@@ -7,7 +7,7 @@ const eventSchema = new mongoose.Schema(
     date: { type: Date, required: true },
     location: { type: String, required: true },
     capacity: { type: Number, required: true },
-    image: { type: String }, // We will store the Image URL here
+    image: { type: String }, 
     organizer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

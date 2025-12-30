@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api"; // Updated import
+import api from "../api"; 
 import { useNavigate } from "react-router-dom";
 
 const CreateEventPage = () => {
@@ -12,13 +12,12 @@ const CreateEventPage = () => {
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [capacity, setCapacity] = useState("");
-  const [image, setImage] = useState(null); // File object
+  const [image, setImage] = useState(null); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) return alert("You must be logged in");
 
-    // Use FormData for file upload
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -30,7 +29,6 @@ const CreateEventPage = () => {
     }
 
     try {
-      // Note: Content-Type header is auto-set by axios/api when sending FormData
       await api.post("/api/events", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
