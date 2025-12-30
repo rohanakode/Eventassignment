@@ -1,131 +1,131 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api"; // Updated import
 import { useNavigate } from "react-router-dom";
 
 const CreateEventPage = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Separate states for easier handling
+  // Form States
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [capacity, setCapacity] = useState("");
-  const [imageFile, setImageFile] = useState(null); // Stores the actual file
-
-  if (!token) window.location.href = "/login";
+  const [image, setImage] = useState(null); // File object
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!token) return alert("You must be logged in");
 
-    // 1. Create FormData (Required for files)
+    // Use FormData for file upload
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
     formData.append("date", date);
     formData.append("location", location);
     formData.append("capacity", capacity);
-    if (imageFile) {
-      formData.append("image", imageFile); // Append the file object
+    if (image) {
+      formData.append("image", image);
     }
 
     try {
-      await axios.post("/api/events", formData, {
+      // Note: Content-Type header is auto-set by axios/api when sending FormData
+      await api.post("/api/events", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data", // Important header!
+          "Content-Type": "multipart/form-data",
         },
       });
       alert("Event Created Successfully!");
       navigate("/");
     } catch (err) {
-      alert("Error creating event");
+      alert(err.response?.data?.message || "Error creating event");
     }
   };
 
   return (
     <div
       style={{
-        maxWidth: "500px",
-        margin: "50px auto",
-        padding: "20px",
+        maxWidth: "600px",
+        margin: "40px auto",
+        padding: "30px",
         border: "1px solid #ddd",
-        borderRadius: "8px",
+        borderRadius: "10px",
+        background: "#f9f9f9",
       }}
     >
-      <h2>Create New Event</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Event Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
+      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+        Create New Event
+      </h2>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+      >
+        <label>Event Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+          style={{ padding: "10px" }}
+        />
 
-        {/* FILE INPUT */}
-        <div style={{ marginBottom: "15px" }}>
-          <label>Upload Image</label>
-          <input
-            type="file"
-            onChange={(e) => setImageFile(e.target.files[0])}
-            accept="image/*"
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
+        <label>Upload Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files[0])}
+          style={{ padding: "10px" }}
+        />
 
-        <div style={{ marginBottom: "15px" }}>
-          <label>Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Location</label>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Capacity</label>
-          <input
-            type="number"
-            value={capacity}
-            onChange={(e) => setCapacity(e.target.value)}
-            required
-            style={{ width: "100%", padding: "8px" }}
-          />
-        </div>
+        <label>Description</label>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+          rows="4"
+          style={{ padding: "10px" }}
+        ></textarea>
+
+        <label>Date</label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          required
+          style={{ padding: "10px" }}
+        />
+
+        <label>Location</label>
+        <input
+          type="text"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          required
+          style={{ padding: "10px" }}
+        />
+
+        <label>Capacity</label>
+        <input
+          type="number"
+          value={capacity}
+          onChange={(e) => setCapacity(e.target.value)}
+          required
+          style={{ padding: "10px" }}
+        />
+
         <button
           type="submit"
           style={{
-            width: "100%",
-            padding: "10px",
-            background: "green",
+            padding: "12px",
+            background: "darkgreen",
             color: "white",
             border: "none",
+            borderRadius: "5px",
             cursor: "pointer",
+            marginTop: "10px",
+            fontSize: "1rem",
           }}
         >
           Create Event
@@ -134,4 +134,5 @@ const CreateEventPage = () => {
     </div>
   );
 };
+
 export default CreateEventPage;

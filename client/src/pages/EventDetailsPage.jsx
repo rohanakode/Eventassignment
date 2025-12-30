@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api"; // 👈 HERE IS THE IMPORT YOU WANTED
 
 const EventDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // 1. HARDCODE THE BACKEND URL (To fix the 404 issue permanently)
-  // This bypasses the Vercel proxy and goes straight to your server.
-  const BACKEND_URL = "https://event-platform-api-jahk.onrender.com";
 
   const token = localStorage.getItem("token");
   const userString = localStorage.getItem("user");
@@ -19,8 +15,9 @@ const EventDetailsPage = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        // Updated to use Full URL
-        const res = await axios.get(`${BACKEND_URL}/api/events/${id}`);
+        // We use 'api.get' instead of 'axios.get'
+        // The URL is cleaner because 'api' already knows the server address
+        const res = await api.get(`/api/events/${id}`);
         setEvent(res.data);
       } catch (err) {
         console.error("Error fetching event");
@@ -32,10 +29,13 @@ const EventDetailsPage = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this event? This cannot be undone."
+      )
+    ) {
       try {
-        // Updated to use Full URL
-        await axios.delete(`${BACKEND_URL}/api/events/${id}`, {
+        await api.delete(`/api/events/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         alert("Event Deleted!");
@@ -49,9 +49,8 @@ const EventDetailsPage = () => {
   const handleRSVP = async () => {
     if (!token) return alert("Please login first");
     try {
-      // Updated to use Full URL
-      await axios.post(
-        `${BACKEND_URL}/api/events/${id}/rsvp`,
+      await api.post(
+        `/api/events/${id}/rsvp`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -60,14 +59,23 @@ const EventDetailsPage = () => {
       alert("Joined Successfully!");
       window.location.reload();
     } catch (err) {
-      console.error(err); // Log the full error to console
+      console.error(err);
       alert(err.response?.data?.message || "Error joining");
     }
   };
 
   if (loading)
-    return <div style={{ padding: "20px" }}>Loading event details...</div>;
-  if (!event) return <div style={{ padding: "20px" }}>Event not found</div>;
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        Loading event details...
+      </div>
+    );
+  if (!event)
+    return (
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        Event not found
+      </div>
+    );
 
   const isOwner =
     user &&

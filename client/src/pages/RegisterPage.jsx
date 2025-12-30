@@ -1,27 +1,21 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api"; // Updated import
 import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/auth/register", formData);
+      await api.post("/api/auth/register", { name, email, password });
       alert("Registration Successful! Please Login.");
       navigate("/login");
     } catch (err) {
-      alert(err.response?.data?.message || "Registration Failed");
+      alert("Error registering user");
     }
   };
 
@@ -31,42 +25,36 @@ const RegisterPage = () => {
         maxWidth: "400px",
         margin: "50px auto",
         padding: "20px",
-        border: "1px solid #ccc",
+        border: "1px solid #ddd",
         borderRadius: "8px",
       }}
     >
       <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
-          />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
-          />
-        </div>
-        <div style={{ marginBottom: "10px" }}>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "8px", boxSizing: "border-box" }}
-          />
-        </div>
+      <form onSubmit={handleRegister}>
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
+        />
         <button
           type="submit"
           style={{
@@ -75,7 +63,7 @@ const RegisterPage = () => {
             background: "green",
             color: "white",
             border: "none",
-            borderRadius: "4px",
+            cursor: "pointer",
           }}
         >
           Register
