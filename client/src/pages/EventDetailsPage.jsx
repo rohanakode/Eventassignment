@@ -8,6 +8,10 @@ const EventDetailsPage = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 1. HARDCODE THE BACKEND URL (To fix the 404 issue permanently)
+  // This bypasses the Vercel proxy and goes straight to your server.
+  const BACKEND_URL = "https://event-platform-api-jahk.onrender.com";
+
   const token = localStorage.getItem("token");
   const userString = localStorage.getItem("user");
   const user = userString ? JSON.parse(userString) : null;
@@ -15,7 +19,8 @@ const EventDetailsPage = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`/api/events/${id}`);
+        // Updated to use Full URL
+        const res = await axios.get(`${BACKEND_URL}/api/events/${id}`);
         setEvent(res.data);
       } catch (err) {
         console.error("Error fetching event");
@@ -27,13 +32,10 @@ const EventDetailsPage = () => {
   }, [id]);
 
   const handleDelete = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this event? This cannot be undone."
-      )
-    ) {
+    if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        await axios.delete(`/api/events/${id}`, {
+        // Updated to use Full URL
+        await axios.delete(`${BACKEND_URL}/api/events/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         alert("Event Deleted!");
@@ -47,8 +49,9 @@ const EventDetailsPage = () => {
   const handleRSVP = async () => {
     if (!token) return alert("Please login first");
     try {
+      // Updated to use Full URL
       await axios.post(
-        `/api/events/${id}/rsvp`,
+        `${BACKEND_URL}/api/events/${id}/rsvp`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -57,12 +60,14 @@ const EventDetailsPage = () => {
       alert("Joined Successfully!");
       window.location.reload();
     } catch (err) {
+      console.error(err); // Log the full error to console
       alert(err.response?.data?.message || "Error joining");
     }
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (!event) return <div>Event not found</div>;
+  if (loading)
+    return <div style={{ padding: "20px" }}>Loading event details...</div>;
+  if (!event) return <div style={{ padding: "20px" }}>Event not found</div>;
 
   const isOwner =
     user &&
@@ -96,7 +101,7 @@ const EventDetailsPage = () => {
           background: "white",
         }}
       >
-        {/* --- HEADER IMAGE (Updated for Cloudinary) --- */}
+        {/* --- HEADER IMAGE --- */}
         <div
           style={{
             height: "400px",
@@ -108,8 +113,8 @@ const EventDetailsPage = () => {
         >
           {event.image ? (
             <img
-              src={event.image} // Simple! Cloudinary gives full URL
-              alt="Event"
+              src={event.image}
+              alt={event.title}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
               onError={(e) => (e.target.style.display = "none")}
             />
